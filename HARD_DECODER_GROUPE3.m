@@ -39,10 +39,8 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
         for j = 1:M
             connectedCNindexes = find(H(j,:) == true);
             for i = connectedCNindexes
-                %mise à l'écart de i (très peu optimisé)
-                %Matlab indique que ce 2 lignes ne sont pas optimisées
-                sans_i_index_of_indexes = find(connectedCNindexes ~= i);
-                sans_i = connectedCNindexes(sans_i_index_of_indexes);
+                %mise à l'écart de i 
+                sans_i = connectedCNindexes(connectedCNindexes ~= i);
                 %récupération des bits envoyés par les VN à l'étape 1
                 assumedCorrectBits = VNtoCNmessages(j,sans_i);
                 %envoi de la réponse pour le VN numéro i
@@ -54,8 +52,7 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
         for i = 1:N
             %récupération des messages des CN l'étape 2 (peu optimisé)
             %Matlab indique que ces deux lignes ne sont pas optimisées
-            connectedVNindexes = find(H(:,i) == true);
-            messagesFromConnectedCN = CNtoVNmessages(connectedVNindexes,i);
+            messagesFromConnectedCN = CNtoVNmessages(H(:,i) == true,i);
             %nouveau bit = vote à majorité entre l'observation et les msg
             c_cor(i) = majorityCheck(c_cor(i),messagesFromConnectedCN);
         end
