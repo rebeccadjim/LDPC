@@ -20,10 +20,9 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
     CNtoVNmessages = -1*ones(M,N); %les CN écrivent, les VN lisent
 
     iterationCounter = 0;
-    allParityValid = false;
     c_cor = c;
     
-    while (iterationCounter < MAX_ITER || allParityValid)
+    while (iterationCounter < MAX_ITER)
 
         %ETAPE 1: VN vers CN
         %Pour chaque VN
@@ -36,6 +35,8 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
         end
         
         %ETAPE 2: CN vers VN (test de parité et réponse)
+        numberOfChecks = sum(H == true,'all'); %nombre de tests à faire
+        alreadyValidParity = 0;
         for j = 1:M
             connectedCNindexes = find(H(j,:) == true);
             for i = connectedCNindexes
@@ -43,9 +44,19 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
                 sans_i = connectedCNindexes(connectedCNindexes ~= i);
                 %récupération des bits envoyés par les VN à l'étape 1
                 assumedCorrectBits = VNtoCNmessages(j,sans_i);
-                %envoi de la réponse pour le VN numéro i
-                CNtoVNmessages(j,i) = parityCheck(assumedCorrectBits);
+                %calcul du bit qui vérifierai la parité et envoi au VN
+                proposedBit = parityCheck(assumedCorrectBits);
+                CNtoVNmessages(j,i) = proposedBit;
+                %retenir si le VN était déjà correct
+                if (proposedBit == VNtoCNmessages(j,i))
+                    alreadyValidParity = alreadyValidParity +1;
+                end
             end
+        end
+        
+        %fin de l'algorithme si tous les VN sont déjà corrects
+        if (alreadyValidParity == numberOfChecks)
+            break
         end
 
         %ETAPE 3: décision des CN
