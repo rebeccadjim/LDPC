@@ -59,13 +59,13 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
             break
         end
 
-        %ETAPE 3: décision des CN
+        %ETAPE 3: décision des VN
         for i = 1:N
             %récupération des messages des CN l'étape 2 (peu optimisé)
             %Matlab indique que ces deux lignes ne sont pas optimisées
             messagesFromConnectedCN = CNtoVNmessages(H(:,i) == true,i);
             %nouveau bit = vote à majorité entre l'observation et les msg
-            c_cor(i) = majorityCheck(c_cor(i),messagesFromConnectedCN);
+            c_cor(i) = majorityCheck(c(i),messagesFromConnectedCN);
         end
 
         iterationCounter = iterationCounter + 1;
