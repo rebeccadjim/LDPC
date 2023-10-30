@@ -35,8 +35,7 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
         end
         
         %ETAPE 2: CN vers VN (test de parité et réponse)
-        numberOfChecks = sum(H == true,'all'); %nombre de tests à faire
-        alreadyValidParity = 0;
+        changeMade = 0;
         for j = 1:M
             connectedVNindexes = find(H(j,:) == true);
             for i = connectedVNindexes
@@ -47,15 +46,16 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
                 %calcul du bit qui vérifierai la parité et envoi au VN
                 proposedBit = parityCheck(assumedCorrectBits);
                 CNtoVNmessages(j,i) = proposedBit;
-                %retenir si le VN était déjà correct
-                if (proposedBit == VNtoCNmessages(j,i))
-                    alreadyValidParity = alreadyValidParity +1;
+                %retenir si la proposition du VN était mauvaise
+                if (proposedBit ~= VNtoCNmessages(j,i))
+                    changeMade = changeMade +1;
                 end
             end
         end
         
-        %fin de l'algorithme si tous les VN sont déjà corrects
-        if (alreadyValidParity == numberOfChecks)
+        %fin de l'algorithme si on a rien eu à changer par rapport aux
+        %propositions des VN à l'étape 1 pour valider la parité
+        if (changeMade == 0)
             break
         end
 
@@ -111,4 +111,3 @@ function decidedBit = majorityCheck(observation, CNresponses)
     decidedBit = mode(obsAndResponses); %bit majoritaire dans le vecteur
 
 end
-
