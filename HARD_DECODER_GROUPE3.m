@@ -38,10 +38,10 @@ function c_cor = HARD_DECODER_GROUPE3(c, H, MAX_ITER)
         numberOfChecks = sum(H == true,'all'); %nombre de tests à faire
         alreadyValidParity = 0;
         for j = 1:M
-            connectedCNindexes = find(H(j,:) == true);
-            for i = connectedCNindexes
+            connectedVNindexes = find(H(j,:) == true);
+            for i = connectedVNindexes
                 %mise à l'écart de i 
-                sans_i = connectedCNindexes(connectedCNindexes ~= i);
+                sans_i = connectedVNindexes(connectedVNindexes ~= i);
                 %récupération des bits envoyés par les VN à l'étape 1
                 assumedCorrectBits = VNtoCNmessages(j,sans_i);
                 %calcul du bit qui vérifierai la parité et envoi au VN
